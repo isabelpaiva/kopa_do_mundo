@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.forms.models import model_to_dict
 from .models import Team
 
+
 class TeamView(APIView):
     def post(self, request):
         team_new = request.data
@@ -20,3 +21,16 @@ class TeamView(APIView):
             )
         new_team = Team.objects.create(**team_new)
         return Response(model_to_dict(new_team), 201)
+
+    def get(self, request):
+        all_teams = Team.objects.values()
+        return Response(all_teams)
+
+
+class TeamDetailView(APIView):
+    def get(self, request, team_id):
+        try:
+            unique_team = Team.objects.get(id=team_id)
+            return Response(model_to_dict(unique_team), 200)
+        except Team.DoesNotExist:
+            return Response({"message": "Team not found"}, 404)
