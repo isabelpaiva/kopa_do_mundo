@@ -1,14 +1,18 @@
 from exceptions import ImpossibleTitlesError, InvalidYearCupError, NegativeTitlesError
+from datetime import date
 
-def data_processing(data):
+def data_processing(data: dict):
     first_cup = int(data["first_cup"].split("-")[0])
+    today = date.today()
+    first_cup = data["first_cup"]
+    first_cup = int(first_cup[0:4])
+    year_verify = today.year - first_cup
 
     if data["titles"] < 0:
-        raise NegativeTitlesError("titles cannot be negative")
+        raise NegativeTitlesError()
 
     if first_cup < 1930 or (first_cup - 1930) % 4 != 0:
-        raise InvalidYearCupError("there was no world cup this year")
+        raise InvalidYearCupError()
     
-    if first_cup <= 2022:
-        raise ImpossibleTitlesError("impossible to have more titles than disputed cups")
-
+    if (year_verify/4) < data["titles"]:
+        raise ImpossibleTitlesError()
